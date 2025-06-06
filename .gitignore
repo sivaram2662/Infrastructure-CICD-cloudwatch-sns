@@ -10,7 +10,7 @@ crash.log
 crash.*.log
 
 # Terraform lock file
-.terraform.lock.hcl
+*.terraform.lock.hcl
 
 # Plan output
 *.tfplan
