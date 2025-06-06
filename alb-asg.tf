@@ -2,8 +2,7 @@ resource "aws_launch_template" "ASG-template" {
   name_prefix   = "web-lt"
   image_id      = var.ami
   instance_type = var.type
-#  user_data = base64encode(file("scripts/deploy_flask.sh"))
-user_data = base64encode(file("${path.module}/scripts/deploy_flask.sh"))
+  user_data     = base64encode(file("scripts/deploy_flask.sh"))
   iam_instance_profile {
     name = aws_iam_instance_profile.ssm.name
   }
