@@ -11,3 +11,4 @@ crash.*.log
 *.terraform.lock.hcl
 *.autoscaling/
 .*scripts/
+.terraform.lock.hcl
