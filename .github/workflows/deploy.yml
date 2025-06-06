@@ -8,8 +8,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      AWS_REGION: ap-south-1
+    # env:
+    #   AWS_REGION: ap-south-1
 
     steps:
     - name: Checkout code
@@ -23,30 +23,42 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
+        aws-region: ${{ secrets.AWS_REGION }}
 
     - name: Terraform Init
       run: terraform init
       working-directory: ./terraform
 
-    - name: Terraform Apply
-      run: terraform apply -auto-approve
+    - name: Terraform fmt
+      run: terraform fmt
       working-directory: ./terraform
 
-    - name: Get Bastion Instance ID
-      id: bastion
-      run: |
-        instance_id=$(aws ec2 describe-instances \
-          --filters "Name=tag:Name,Values=bastion-host" \
-          --query "Reservations[0].Instances[0].InstanceId" \
-          --output text --region $AWS_REGION)
-        echo "instance_id=$instance_id" >> $GITHUB_OUTPUT
+    - name: Terraform validate
+      run: terraform validate
+      working-directory: ./terraform
 
-    - name: Deploy Flask App via SSM
-      run: |
-        aws ssm send-command \
-          --instance-ids ${{ steps.bastion.outputs.instance_id }} \
-          --document-name "AWS-RunShellScript" \
-          --comment "Deploy Flask app" \
-          --parameters commands=["$(cat scripts/deploy_flask.sh)"] \
-          --region $AWS_REGION
+    - name: Terraform plan
+      run: terraform plan --var-file zones.tfvars
+      working-directory: ./terraform
+      
+    # - name: Terraform Apply
+    #   run: terraform apply -auto-approve
+    #   working-directory: ./terraform
+
+    # - name: Get Bastion Instance ID
+    #   id: bastion
+    #   run: |
+    #     instance_id=$(aws ec2 describe-instances \
+    #       --filters "Name=tag:Name,Values=bastion-host" \
+    #       --query "Reservations[0].Instances[0].InstanceId" \
+    #       --output text --region $AWS_REGION)
+    #     echo "instance_id=$instance_id" >> $GITHUB_OUTPUT
+
+    # - name: Deploy Flask App via SSM
+    #   run: |
+    #     aws ssm send-command \
+    #       --instance-ids ${{ steps.bastion.outputs.instance_id }} \
+    #       --document-name "AWS-RunShellScript" \
+    #       --comment "Deploy Flask app" \
+    #       --parameters commands=["$(cat scripts/deploy_flask.sh)"] \
+    #       --region $AWS_REGION
