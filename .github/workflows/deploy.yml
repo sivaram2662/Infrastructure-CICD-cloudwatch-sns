@@ -37,9 +37,9 @@ jobs:
       run: terraform validate
       # working-directory: ./terraform
 
-    - name: Terraform plan
-      run: terraform plan --var-file zones.tfvars
-      # working-directory: ./terraform
+    # - name: Terraform plan
+    #   run: terraform plan --var-file zones.tfvars
+    #   # working-directory: ./terraform
 
     - name: Terraform destroy
       run: terraform destroy --var-file zones.tfvars --auto-approve
