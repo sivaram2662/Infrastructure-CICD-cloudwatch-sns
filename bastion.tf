@@ -20,7 +20,7 @@ resource "aws_security_group" "bastion" {
   }
 
   tags = {
-    Name = "bastion-host"
+    Name = "stage-bastion"
   }
 }
 # bastion instance
@@ -32,7 +32,7 @@ resource "aws_instance" "bastion" {
   iam_instance_profile   = aws_iam_instance_profile.ssm.name
   #   key_name               = aws_key_pair.deployer.id
   tags = {
-    Name = "stage-bastion"
+    Name = "bastion-host"
   }
 }
 
